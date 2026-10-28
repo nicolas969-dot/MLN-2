@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Registro Profesional</title>
+  <style>
+    :root {
+      --bg-main: #0f172a;
+      --panel-bg: #1e293b;
+      --accent-blue: #2563eb;
+      --accent-hover: #1d4ed8;
+      --border-color: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --active-bg: rgba(16, 185, 129, 0.2);
+      --active-text: #34d399;
+      --inactive-bg: rgba(239, 68, 68, 0.2);
+      --inactive-text: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app-container {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      width: 100%;
+      max-width: 1200px;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-panel {
+      padding: 32px 24px;
+      background-color: #1a2332;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .table-panel {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 8px;
+      display: inline-block;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    input, select {
+      background-color: var(--bg-main);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent-blue);
+    }
+
+    button.btn-submit {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.2s;
+    }
+
+    button.btn-submit:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #0f172a;
+      color: var(--text-secondary);
+      padding: 14px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge.activo {
+      background-color: var(--active-bg);
+      color: var(--active-text);
+    }
+
+    .badge.inactivo {
+      background-color: var(--inactive-bg);
+      color: var(--inactive-text);
+    }
+
+    .btn-delete {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--inactive-text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .btn-delete:hover {
+      background-color: var(--inactive-bg);
+      border-color: var(--inactive-text);
+    }
+
+    @media (max-width: 900px) {
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+
+      .form-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <section class="form-panel">
+      <h2>Nuevo Usuario</h2>
+      <form id="appForm">
+        <div class="form-group">
+          <label for="nombre">Nombre Completo</label>
+          <input type="text" id="nombre" required placeholder="Nombre completo">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" required placeholder="correo@ejemplo.com">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" required placeholder="Ej. carlos@empresa.com">
+        </div>
+
+        <div class="form-group">
+          <label for="cargo">Rol / Cargo</label>
+          <select id="cargo" required>
+            <option value="Desarrollador">Desarrollador</option>
+            <option value="Diseñador">Diseñador</option>
+            <option value="Gerente">Gerente</option>
+            <option value="Analista">Analista</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <select id="estado" required>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit">Registrar Usuario</button>
+      </form>
+    </section>
+
+    <section class="table-panel">
+      <h2>Listado de Personal</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Cargo</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="appTableBody">
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    class UserRegistry {
+      constructor() {
+        this.records = [];
+        this.form = document.getElementById('appForm');
+        this.tbody = document.getElementById('appTableBody');
+        this.init();
+      }
+
+      init() {
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.tbody.addEventListener('click', (e) => this.handleTableActions(e));
+      }
+
+      handleSubmit(e) {
+        e.preventDefault();
+        const userData = {
+          id: Date.now(),
+          nombre: document.getElementById('nombre').value,
+          email: document.getElementById('email').value,
+          cargo: document.getElementById('cargo').value,
+          estado: document.getElementById('estado').value
+        };
+        this.addUser(userData);
+        this.form.reset();
+      }
+
+      addUser(user) {
+        this.records.push(user);
+        this.render();
+      }
+
+      deleteUser(id) {
+        this.records = this.records.filter(user => user.id !== id);
+        this.render();
+      }
+
+      handleTableActions(e) {
+        if (e.target.classList.contains('btn-delete')) {
+          const id = Number(e.target.dataset.id);
+          this.deleteUser(id);
+        }
+      }
+
+      render() {
+        this.tbody.innerHTML = this.records.map(user => `
+          <tr>
+            <td>${user.nombre}</td>
+            <td>${user.email}</td>
+            <td>${user.cargo}</td>
+            <td>
+              <span class="badge ${user.estado.toLowerCase()}">${user.estado}</span>
+            </td>
+            <td>
+              <button class="btn-delete" data-id="${user.id}">Eliminar</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      new UserRegistry();
+    });
+  </script>
+
+</body>
+</html>
